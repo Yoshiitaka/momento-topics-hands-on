@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An infrastructure for user info and user images.
+
+Resources:
+  UserImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: user-images-bucket-2023-0907
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - "PUT"
+              - "POST"
+              - "GET"
+            AllowedOrigins:
+              - "*"
+            MaxAge: 3000
+
+  UserImagesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref UserImagesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowPublicPut
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - "s3:PutObject"
+              - "s3:GetObject"
+            Resource:
+              Fn::Sub: arn:aws:s3:::${UserImagesBucket}/*
+
+  UserDataTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: UserData
+      PrimaryKey:
+        Name: username
+        Type: String
