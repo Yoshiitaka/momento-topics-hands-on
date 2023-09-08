@@ -9,7 +9,7 @@ import {
   authenticationMethod,
   AuthenticationMethod,
 } from "./config";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../../../pages/api/auth/[...nextauth].ts/route";
 import { getServerSession } from "next-auth";
 
 const authClient = new AuthClient({

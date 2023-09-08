@@ -4,7 +4,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 const Document = () => (
   <Html className={"h-full"}>
     <Head />
-    <body className={" h-full"} suppressHydrationWarning={true}>
+    <body className={"h-full"} suppressHydrationWarning={true}>
       <Main />
       <NextScript />
     </body>

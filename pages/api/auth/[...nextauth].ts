@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { type AuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
@@ -46,18 +46,8 @@ export const authOptions: AuthOptions = {
         }
       },
     }),
-    // Add other providers below, full list here: https://next-auth.js.org/providers/
-    // Auth0Provider({
-    //   clientId: process.env.AUTH0_CLIENT_ID,
-    //   clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    //   issuer: process.env.AUTH0_ISSUER
-    // }),
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    // }),
   ],
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export default handler;

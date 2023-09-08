@@ -57,7 +57,7 @@ const Page: NextPage = () => {
         Body: userImage
       };
       await s3.upload(uploadParams).promise();
-  
+
       // Save directly to DynamoDB
       const result = await writeToDynamoDB(username);
 
@@ -102,51 +102,53 @@ const Page: NextPage = () => {
 
   if (!usernameSelected) {
     return (
-      <div
-        className={
-          "flex h-full justify-center items-center flex-col bg-slate-300"
-        }
-      >
-        <div className={"w-72 text-center"}>
-        </div>
-        <div className={"h-4"} />
-        <div className={"flex w-72 justify-center"}>
-          <input
-            className={"rounded-2xl p-2 w-60 items-center"}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder={"username"}
-          />
-        </div>
-        <div className={"flex w-72 justify-center my-6"}>
-          <input type="file" accept=".png, .jpeg" onChange={handleImageChange} />
-        </div>
-        <div className={"h-4"} />
-        <div className={"w-72 flex justify-center"}>
-          <button
-            onClick={handleEnter}
-            disabled={!username || !userImage}
-            className={
-              "disabled:bg-slate-50 disabled:brightness-75 disabled:cursor-default rounded-2xl hover:cursor-pointer w-24 bg-emerald-400 p-2 hover:brightness-75"
-            }
-          >
-            Enter
-          </button>
+      <div className='h-full'>
+        <div
+          className={
+            "flex h-screen justify-center items-center flex-col bg-slate-300"
+          }
+        >
+          <div className={"w-72 text-center"}>
+          </div>
+          <div className={"h-4"} />
+          <div className={"flex w-72 justify-center"}>
+            <input
+              className={"rounded-2xl p-2 w-60 items-center"}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={"username"}
+            />
+          </div>
+          <div className={"flex w-72 justify-center my-6"}>
+            <input type="file" accept=".png, .jpeg" onChange={handleImageChange} />
+          </div>
+          <div className={"h-4"} />
+          <div className={"w-72 flex justify-center"}>
+            <button
+              onClick={handleEnter}
+              disabled={!username || !userImage}
+              className={
+                "disabled:bg-slate-50 disabled:brightness-75 disabled:cursor-default rounded-2xl hover:cursor-pointer w-24 bg-emerald-400 p-2 hover:brightness-75"
+              }
+            >
+              Enter
+            </button>
+          </div>
         </div>
       </div>
     );
   }
-      // <ChatRoom
-      //   topicName={username}
-      //   cacheName={cacheName}
-      //   username={username}
-      //   onLeave={leaveChatRoom}
-      // />
+  // <ChatRoom
+  //   topicName={username}
+  //   cacheName={cacheName}
+  //   username={username}
+  //   onLeave={leaveChatRoom}
+  // />
 
   return (
     <>
-    <TinderHeader />
-    <TinderCards />
+      <TinderHeader />
+      <TinderCards />
     </>
   );
 }
