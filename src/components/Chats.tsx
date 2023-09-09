@@ -7,9 +7,14 @@ type MessageType = {
     profilePic: string;
     message: string;
     timestamp: string;
-    }[]
+    }[];
 
-function Chats() {
+type ChatsProps = {
+    currentUsername: string;
+};
+
+
+function Chats({ currentUsername }: ChatsProps) {
     const [chats, setChats] = useState<MessageType>([]);
 
     AWS.config.update({
@@ -34,6 +39,7 @@ function Chats() {
                 const fetchedChats = [];
 
                 for (let username of userNames as any) {
+                    if (username === currentUsername) continue;
                     const s3Params = {
                         Bucket: `${backetName}`,
                         Prefix: username
@@ -57,7 +63,7 @@ function Chats() {
         };
 
         fetchData();
-    }, []);
+    }, [currentUsername]);
 
     return (
         <div className='chats'>

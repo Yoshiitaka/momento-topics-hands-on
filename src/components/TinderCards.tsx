@@ -10,7 +10,11 @@ type FetchedPeople = {
     url: string;
 }[]
 
-function TinderCards() {
+type TinderCardsProps = {
+    currentUsername: string;
+};
+
+function TinderCards({ currentUsername }: TinderCardsProps) {
     const [people, setPeople] = useState<FetchedPeople>([]);
 
     AWS.config.update({
@@ -36,6 +40,7 @@ function TinderCards() {
                 const fetchedPeople = [];
 
                 for (let username of userNames as any) {
+                    if (username === currentUsername) continue;
                     const s3Params = {
                         Bucket: `${backetName}`,
                         Prefix: username // assuming it would match the [key] in S3
@@ -56,7 +61,7 @@ function TinderCards() {
         };
 
         fetchData();
-    }, []);
+    }, [currentUsername]);
 
     return (
         <div>

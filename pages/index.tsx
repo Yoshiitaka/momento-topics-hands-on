@@ -1,16 +1,13 @@
 "use client";
 import { NextPage } from 'next';
 import { useState } from "react";
-import { clearCurrentClient } from "@/utils/momento-web";
 import AWS from 'aws-sdk';
 import TinderHeader from '../src/components/Header';
 import TinderCards from '../src/components/TinderCards';
 
 const Page: NextPage = () => {
-  const authMethod = String(process.env.NEXT_PUBLIC_AUTH_METHOD);
   const [username, setUsername] = useState("");
   const [userImage, setUserImage] = useState(null);
-  const [chatRoomSelected, setChatRoomSelected] = useState(false);
   const [usernameSelected, setUsernameSelected] = useState(false);
 
   AWS.config.update({
@@ -57,19 +54,13 @@ const Page: NextPage = () => {
       const result = await writeToDynamoDB(username);
 
       if (result) {
+        localStorage.setItem('username', username);
         setUsernameSelected(true);
       } else {
         // handle error here
       }
     }
   }
-
-  const leaveChatRoom = () => {
-    clearCurrentClient();
-    setChatRoomSelected(false);
-    setUsernameSelected(false);
-    setUsername("");
-  };
 
   if (!usernameSelected) {
     return (
@@ -113,7 +104,7 @@ const Page: NextPage = () => {
   return (
     <>
       <TinderHeader />
-      <TinderCards />
+      <TinderCards currentUsername={username} />
     </>
   );
 }
