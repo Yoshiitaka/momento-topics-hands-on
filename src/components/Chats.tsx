@@ -7,14 +7,9 @@ type MessageType = {
     profilePic: string;
     message: string;
     timestamp: string;
-    }[];
+}[];
 
-type ChatsProps = {
-    currentUsername: string;
-};
-
-
-function Chats({ currentUsername }: ChatsProps) {
+function Chats() {
     const [chats, setChats] = useState<MessageType>([]);
 
     AWS.config.update({
@@ -29,6 +24,13 @@ function Chats({ currentUsername }: ChatsProps) {
 
     useEffect(() => {
         const fetchData = async () => {
+
+            const storedUsername = localStorage.getItem("username");
+            if (!storedUsername) {
+                console.error("Stored username is not found in localStorage.");
+                return;
+            }
+
             const params = {
                 TableName: "UserData"
             };
@@ -39,7 +41,7 @@ function Chats({ currentUsername }: ChatsProps) {
                 const fetchedChats = [];
 
                 for (let username of userNames as any) {
-                    if (username === currentUsername) continue;
+                    if (username === storedUsername) continue;
                     const s3Params = {
                         Bucket: `${backetName}`,
                         Prefix: username
@@ -56,14 +58,49 @@ function Chats({ currentUsername }: ChatsProps) {
                     }
                 }
 
-                setChats(fetchedChats);
+                const likeUserParams = {
+                    TableName: 'Likes',
+                    KeyConditionExpression: '#userAttribute = :username',
+                    ExpressionAttributeNames: {
+                        '#userAttribute': 'user'
+                    },
+                    ExpressionAttributeValues: {
+                        ':username': storedUsername
+                    }
+                };
+
+                const userLikesData = await dynamodb.query(likeUserParams).promise();
+                const usersLikedByMe = userLikesData.Items?.map(item => item.likedUser) || [];
+        
+                const likedByUserParams = {
+                    TableName: 'Likes',
+                    KeyConditionExpression: '#likedUserAttribute = :username',
+                    ExpressionAttributeNames: {
+                        '#likedUserAttribute': 'user'
+                    },
+                    ExpressionAttributeValues: {
+                        ':username': storedUsername
+                    }
+                };
+        
+                const likedByUserData = await dynamodb.query(likedByUserParams).promise();
+                const usersWhoLikedMe = likedByUserData.Items?.map(item => item.likedUser) || [];
+        
+                // 互いにlikeしているユーザーを識別
+                const mutualLikes = usersLikedByMe.filter(user => usersWhoLikedMe.includes(user));
+        
+                // mutualLikesを使ってfetchedChatsをフィルタリング
+                const filteredChats = fetchedChats.filter(chat => mutualLikes.includes(chat.name));        
+
+                setChats(filteredChats);
+
             } catch (error) {
                 console.error("Error fetching chats:", error);
             }
         };
 
         fetchData();
-    }, [currentUsername]);
+    }, []);
 
     return (
         <div className='chats'>

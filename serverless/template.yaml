@@ -48,3 +48,19 @@ Resources:
       PrimaryKey:
         Name: username
         Type: String
+
+  LikesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Likes
+      AttributeDefinitions:
+        - AttributeName: user
+          AttributeType: S
+        - AttributeName: likedUser
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user
+          KeyType: HASH
+        - AttributeName: likedUser
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
