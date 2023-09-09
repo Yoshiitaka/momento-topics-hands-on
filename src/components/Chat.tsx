@@ -1,7 +1,14 @@
 import Avatar from '@mui/material/Avatar';
 import Link from 'next/link';
 
-const Chat = ({ name, message, profilePic, timestamp }) => {
+type ChatProps = {
+  name: string;
+  message: string;
+  profilePic: string;
+  timestamp: string;
+};
+
+const Chat: React.FC<ChatProps> = ({ name, message, profilePic, timestamp }) => {
   return (
     <Link href={{ pathname: `/chat/${name}`}}>
       <div className="no-underline text-current block">

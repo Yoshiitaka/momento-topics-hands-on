@@ -53,7 +53,6 @@ const Page: NextPage = () => {
       };
       await s3.upload(uploadParams).promise();
 
-      // Save directly to DynamoDB
       const result = await writeToDynamoDB(username);
 
       if (result) {

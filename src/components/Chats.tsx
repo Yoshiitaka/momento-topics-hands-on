@@ -2,8 +2,15 @@ import React, { useState, useEffect } from 'react';
 import AWS from 'aws-sdk';
 import Chat from './Chat';
 
+type MessageType = {
+    name: string;
+    profilePic: string;
+    message: string;
+    timestamp: string;
+    }[]
+
 function Chats() {
-    const [chats, setChats] = useState([]);
+    const [chats, setChats] = useState<MessageType>([]);
 
     AWS.config.update({
         accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY,
@@ -22,11 +29,10 @@ function Chats() {
 
             try {
                 const result = await dynamodb.scan(params).promise();
-                const userNames = result.Items.map(item => item.username);
-
+                const userNames = result.Items?.map(item => item.username);
                 const fetchedChats = [];
 
-                for (let username of userNames) {
+                for (let username of userNames as any) {
                     const s3Params = {
                         Bucket: 'user-images-bucket-2023-0907',
                         Prefix: username

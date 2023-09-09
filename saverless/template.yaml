@@ -6,6 +6,7 @@ Resources:
   UserImagesBucket:
     Type: AWS::S3::Bucket
     Properties:
+      # バケット名を変更する
       BucketName: user-images-bucket-2023-0907
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false

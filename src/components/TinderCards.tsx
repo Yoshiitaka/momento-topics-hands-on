@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic';
 import AWS from 'aws-sdk';
-
 const TinderCard = dynamic(() => import('react-tinder-card'), {
   ssr: false
 });
 
+type FetchedPeople = {
+    name: any;
+    url: string;
+}[]
+
 function TinderCards() {
-    const [people, setPeople] = useState([]);
+    const [people, setPeople] = useState<FetchedPeople>([]);
 
     AWS.config.update({
       accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY,
@@ -26,11 +30,11 @@ function TinderCards() {
 
             try {
                 const result = await dynamodb.scan(params).promise();
-                const userNames = result.Items.map(item => item.username);
+                const userNames = result.Items?.map(item => item.username);
 
                 const fetchedPeople = [];
 
-                for (let username of userNames) {
+                for (let username of userNames as any) {
                     const s3Params = {
                         Bucket: 'user-images-bucket-2023-0907',
                         Prefix: username // assuming it would match the [key] in S3
