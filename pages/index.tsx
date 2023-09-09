@@ -21,6 +21,7 @@ const Page: NextPage = () => {
 
   const s3 = new AWS.S3();
   const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const backetName = process.env.NEXT_PUBLIC_S3_BACKET_NAME;
 
   const writeToDynamoDB = async (username: any) => {
     const params = {
@@ -47,7 +48,7 @@ const Page: NextPage = () => {
     if (username && userImage) {
       // Upload to S3
       const uploadParams = {
-        Bucket: 'user-images-bucket-2023-0907',
+        Bucket: `${backetName}`,
         Key: username,
         Body: userImage
       };

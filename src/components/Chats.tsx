@@ -20,6 +20,7 @@ function Chats() {
 
     const dynamodb = new AWS.DynamoDB.DocumentClient();
     const s3 = new AWS.S3();
+    const backetName = process.env.NEXT_PUBLIC_S3_BACKET_NAME;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,12 +35,12 @@ function Chats() {
 
                 for (let username of userNames as any) {
                     const s3Params = {
-                        Bucket: 'user-images-bucket-2023-0907',
+                        Bucket: `${backetName}`,
                         Prefix: username
                     };
                     const s3Data = await s3.listObjectsV2(s3Params).promise();
                     if (s3Data && s3Data.Contents && s3Data.Contents.length > 0) {
-                        const imageUrl = `https://user-images-bucket-2023-0907.s3.ap-northeast-1.amazonaws.com/${s3Data.Contents[0].Key}`;
+                        const imageUrl = `https://${backetName}.s3.ap-northeast-1.amazonaws.com/${s3Data.Contents[0].Key}`;
                         fetchedChats.push({
                             name: username,
                             profilePic: imageUrl,
