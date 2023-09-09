@@ -1,37 +1,70 @@
-import React from 'react'
-import Chat from './Chat'
+import React, { useState, useEffect } from 'react';
+import AWS from 'aws-sdk';
+import Chat from './Chat';
 
 function Chats() {
+    const [chats, setChats] = useState([]);
+
+    AWS.config.update({
+        accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY,
+        secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+        region: 'ap-northeast-1'
+    });
+
+    const dynamodb = new AWS.DynamoDB.DocumentClient();
+    const s3 = new AWS.S3();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const params = {
+                TableName: "UserData"
+            };
+
+            try {
+                const result = await dynamodb.scan(params).promise();
+                const userNames = result.Items.map(item => item.username);
+
+                const fetchedChats = [];
+
+                for (let username of userNames) {
+                    const s3Params = {
+                        Bucket: 'user-images-bucket-2023-0907',
+                        Prefix: username
+                    };
+                    const s3Data = await s3.listObjectsV2(s3Params).promise();
+                    if (s3Data && s3Data.Contents && s3Data.Contents.length > 0) {
+                        const imageUrl = `https://user-images-bucket-2023-0907.s3.ap-northeast-1.amazonaws.com/${s3Data.Contents[0].Key}`;
+                        fetchedChats.push({
+                            name: username,
+                            profilePic: imageUrl,
+                            message: "Hello!",
+                            timestamp: "Just now"
+                        });
+                    }
+                }
+
+                setChats(fetchedChats);
+            } catch (error) {
+                console.error("Error fetching chats:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <div className='chats'>
-            <Chat
-                name="Taylor"
-                message="Hey Whats up!"
-                timestamp="40 second ago"
-                profilePic="https://drive.google.com/uc?export=download&id=1f_hjy1EEKOCADR1ejmhUxU-SbBJYf7bU"
-            />
-            <Chat
-                name="Mark"
-                message="yooo 🤩"
-                timestamp="30 minutes ago"
-                profilePic="https://drive.google.com/uc?export=download&id=1eoyF6XfWFjPuNHb-pR13bDBlC-aOzwsZ" />
-            <Chat
-                name="Ellen"
-                message="Hi 🔥"
-                timestamp="2 hour ago"
-                profilePic="https://drive.google.com/uc?export=download&id=1B4llVA2gkx-BMLkv8i9NHVHPtRGKPEZC" />
-            <Chat
-                name="Tom"
-                message="Chat us! 😎"
-                timestamp="40 second ago"
-                profilePic="https://drive.google.com/uc?export=download&id=1PNru-ygHnNMwlyUSI7tuJH-af1BnH5bj" />
-            <Chat
-                name="Joan"
-                message="Work 😴"
-                timestamp="18 hour ago"
-                profilePic="https://drive.google.com/uc?export=download&id=1bKMa5o5gos9Tq0XxeyFyqNIWoqoYavqw" />
+            {chats.map(chat => (
+                <Chat
+                    key={chat.name}
+                    name={chat.name}
+                    message={chat.message}
+                    timestamp={chat.timestamp}
+                    profilePic={chat.profilePic}
+                />
+            ))}
         </div>
-    )
+    );
 }
 
-export default Chats
+export default Chats;

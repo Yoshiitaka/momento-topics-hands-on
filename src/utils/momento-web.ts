@@ -46,7 +46,8 @@ async function getNewWebClients(): Promise<MomentoClients> {
   const fetchResp = await fetch(window.location.origin + "/api/momento/token", {
     cache: "no-store",
   });
-  const token = await fetchResp.text();
+  const jsonResponse = await fetchResp.json();
+  const token = jsonResponse.authToken;
   const topicClient = new TopicClient({
     configuration: Configurations.Browser.v1(),
     credentialProvider: CredentialProvider.fromString({

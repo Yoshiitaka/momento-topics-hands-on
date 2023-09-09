@@ -6,7 +6,6 @@ import { IconButton } from '@mui/material';
 
 function TinderHeader() {
     const router = useRouter();
-
     return (
         <div className='flex justify-between items-center border-b border-gray-200'>
             <PersonIcon className='cursor-pointer' fontSize='large' />

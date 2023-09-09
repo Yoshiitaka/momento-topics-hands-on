@@ -51,17 +51,13 @@ function TinderCards() {
         };
 
         fetchData();
-
-        return () => {
-            // any cleanup code, if necessary
-        };
     }, []);
 
     return (
         <div>
             <div className='flex justify-center mt-20'>
                 {people.map(person => (
-                    <TinderCard className='absolute' key={person.name} preventSwipe={['up', 'down']}>
+                    <TinderCard className='absolute bg-white' key={person.name} preventSwipe={['up', 'down']}>
                         <div style={{ backgroundImage: `url(${person.url})` }} className='relative w-[600px] p-5 max-w-[85vw] h-[50vh] rounded-xl bg-cover bg-center shadow-lg'>
                         </div>
                         <h3 className='bottom-2.5 text-black bg-white rounded-xl text-center'>{person.name}</h3>
