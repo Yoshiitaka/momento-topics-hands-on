@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic';
 import AWS from 'aws-sdk';
+
 const TinderCard = dynamic(() => import('react-tinder-card'), {
   ssr: false
 });
@@ -18,34 +19,55 @@ AWS.config.update({
     accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY,
     secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
     region: 'ap-northeast-1'
-  });
+});
 
-  const dynamodb = new AWS.DynamoDB.DocumentClient();
-  const s3 = new AWS.S3();
-  const backetName = process.env.NEXT_PUBLIC_S3_BACKET_NAME;
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+const s3 = new AWS.S3();
+const backetName = process.env.NEXT_PUBLIC_S3_BACKET_NAME;
 
+const onSwipe = async (direction: any, personName: string, currentUsername: string) => {
+    console.log('You swiped: ' + direction);
 
-  const onSwipe = async (direction: any, personName: string, currentUsername: string) => {
-    console.log('You swiped: ' + direction)
     if (direction === 'right') {
-        // Likeの情報をDynamoDBに記録する
-        const likeRecord = {
+        const uuid = require('uuid');
+        let chatRoomId = uuid.v4();
+
+        const searchParams = {
             TableName: 'Likes',
-            Item: {
-                user: currentUsername,
-                likedUser: personName,
-                timestamp: new Date().toISOString()  // Like情報にタイムスタンプを追加 (オプション)
+            KeyConditionExpression: '#userAttribute = :likedUserVal AND #likedUserAttribute = :userVal',
+            ExpressionAttributeNames: {
+                '#userAttribute': 'user',
+                '#likedUserAttribute': 'likedUser'
+            },
+            ExpressionAttributeValues: {
+                ':userVal': currentUsername,
+                ':likedUserVal': personName
             }
         };
+
         try {
+            const result = await dynamodb.query(searchParams).promise();
+            if (result.Items && result.Items.length > 0) {
+                chatRoomId = result.Items[0].ChatRoom;
+            }
+
+            const likeRecord = {
+                TableName: 'Likes',
+                Item: {
+                    user: currentUsername,
+                    likedUser: personName,
+                    ChatRoom: chatRoomId,
+                    timestamp: new Date().toISOString()
+                }
+            };
+            
             await dynamodb.put(likeRecord).promise();
             console.log(`Saved like from ${currentUsername} to ${personName}`);
         } catch (error) {
-            console.error('Error saving like:', error);
+            console.error('Error on swiping:', error);
         }
     }
 }
-
 
 function TinderCards({ currentUsername }: TinderCardsProps) {
     const [people, setPeople] = useState<FetchedPeople>([]);
@@ -59,14 +81,13 @@ function TinderCards({ currentUsername }: TinderCardsProps) {
             try {
                 const result = await dynamodb.scan(params).promise();
                 const userNames = result.Items?.map(item => item.username);
-
                 const fetchedPeople = [];
 
                 for (let username of userNames as any) {
                     if (username === currentUsername) continue;
                     const s3Params = {
                         Bucket: `${backetName}`,
-                        Prefix: username // assuming it would match the [key] in S3
+                        Prefix: username
                     };
                     const s3Data = await s3.listObjectsV2(s3Params).promise();
                     if (s3Data && s3Data.Contents && s3Data.Contents.length > 0) {
@@ -90,8 +111,13 @@ function TinderCards({ currentUsername }: TinderCardsProps) {
         <div>
             <div className='flex justify-center mt-20'>
                 {people.map(person => (
-                    <TinderCard onSwipe={(direction) => onSwipe(direction, person.name, currentUsername)} className='absolute bg-white' key={person.name} preventSwipe={['up', 'down']}>
-                        <div style={{ backgroundImage: `url(${person.url})` }} className='relative w-[600px] p-5 max-w-[85vw] h-[50vh] rounded-xl bg-cover bg-center shadow-lg'>
+                    <TinderCard 
+                        onSwipe={(direction) => onSwipe(direction, person.name, currentUsername)} 
+                        className='absolute bg-white' 
+                        key={person.name} 
+                        preventSwipe={['up', 'down']}>
+                        <div style={{ backgroundImage: `url(${person.url})` }} 
+                             className='relative w-[600px] p-5 max-w-[85vw] h-[50vh] rounded-xl bg-cover bg-center shadow-lg'>
                         </div>
                         <h3 className='bottom-2.5 text-black bg-white rounded-xl text-center'>{person.name}</h3>
                     </TinderCard>
