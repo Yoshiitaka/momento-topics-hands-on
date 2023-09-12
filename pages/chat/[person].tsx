@@ -14,7 +14,6 @@ AWS.config.update({
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function getChatRoomFromLikes(storedUsername: string, username: string) {
-  console.log("storedUsername:", storedUsername, "username:", username);
 
   const params = {
       TableName: "Likes",
@@ -30,7 +29,6 @@ async function getChatRoomFromLikes(storedUsername: string, username: string) {
 
   try {
       const result = await dynamodb.query(params).promise();
-      console.log(result)
       return result.Items && result.Items[0] ? result.Items[0].ChatRoom : null;
   } catch (error) {
       console.error("Error fetching from DynamoDB:", error);

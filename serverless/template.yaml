@@ -63,4 +63,11 @@ Resources:
           KeyType: HASH
         - AttributeName: likedUser
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: likedUser-index
+          KeySchema:
+            - AttributeName: likedUser
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
