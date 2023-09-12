@@ -10,7 +10,7 @@ function TinderHeader() {
         <div className='flex justify-between items-center border-b border-gray-200'>
             <PersonIcon className='cursor-pointer' fontSize='large' />
             <Link href='/'>
-                <img className='h-10 object-contain' src='https://drive.google.com/uc?export=download&id=16irET-NWvD4aI255f7qO_1adcHFgzrFc' alt='tinder/logo' />
+                <img className='h-10 object-contain' src='/momento.png' alt='momento' />
             </Link>
             <Link href='/chat'>
                     <IconButton className='p-5'>
