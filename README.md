@@ -47,15 +47,108 @@
 
 ### Momento TopicsをMomentoコンソールから体験してみます。
 
+### Momento Topicsを体験する為の設定をします。
+* 左のタブにある「topics」を選択する。
+* そうすると以下の画面になります。
+* 「クラウドプロバイダー」には[aws]を選択し、「リージョン」には[ap-northeast-1]を、「Cache」に[example]を設定します。
+* 最後に、「Topics」に[test]を入力し、「Subscribe」をクリックします。
+
+![momento Topicsを体験する](images/momento_7.png)
+
+#### 体験してみましょう。
+* 「Type your message...」にテキストを入力し、「Publish」をクリックするとメッセージの送受信ができることが確認できます。
+
+![momento Topicsを体験する](images/momento_8.png)
 
 ### AWSにて作業環境を構築
-AWSへログイン
-Cloud9へアクセス
-githubからのCloneを選択
-GitHubからリポジトリをcloneする (https://github.com/Yoshiitaka/momento-topics-hands-on)
+#### AWSへログイン
+* 自身でお持ちのAWSアカウントへログインしてください。
 
+#### Cloud9へアクセス
+* マネジメントコンソールからCloud9へアクセスします。
+
+AWS Cloud9 は、ブラウザだけでコードを作成、実行、デバッグできるクラウドベースの統合開発環境 (IDE) です。
+コードエディター、デバッガー、ターミナルが含まれています。Cloud9 には、一般的なプログラミング言語に必要なツールと AWS コマンドラインインターフェイス (CLI) がプリインストールされているため、このワークショップのためにファイルをインストールしたりラップトップを設定したりする必要はありません。
+
+Cloud9 環境は、AWS マネジメントコンソールにログインしたユーザーと同じ AWS リソースにアクセスできるようになります。
+
+AWS Cloud9 の詳細については、以下のリソースをご覧ください。
+* https://aws.amazon.com/cloud9/ 
+* https://docs.aws.amazon.com/cloud9/latest/user-guide/welcome.html 
+
+#### Cloud9にてワークスペースを作成する
+
+* デフォルト設定の AWS Cloud9 アプローチに従います このワークショップに必要なCloud9インスタンスを作成します。
+
+https://docs.aws.amazon.com/ja_jp/cloud9/latest/user-guide/tutorial-create-environment.html
+
+* 「リージョン」は[ap-northeast-1]を設定し、「環境作を作成」からワークスペースを作成します。
+
+![cloud9でワークスペースを作成する](images/momento_9.png)
+
+* 名前に[momento-workspace]を入力してください。
+* 環境タイプはデフォストの状態で[新しいEC2インスタンス]のチェックボックスの入力のままにしておきます。
+* 新しいEC2インスタンスにはデフォルトの状態のままで[t2.micro]のチェックボックスに入力されたままにしておきます。
+* プラットフォームは[Amazon Linux 2]のままでタイムアウトは[30分]のままにします。
+* ネットワーク設定については、接続を[AWS Systems Manager(SSM)]のままにします。
+* VPCの設定もいじらずそのままとしましょう。
+* 上記の状態でデフォルトの状態のまま[作成]をクリックしてください。
+
+#### githubからのCloneを選択
+
+* Cloud9のワークスペース[momento-workspace]の作成が完了するまで2~3分程度お待ちください。このタイミングで作成が完了しなかった場合は、講師にヘルプを求めてください。
+* 完了し次第、下記の画面のようになるので、[開く]をクリックしてください。
+
+![cloud9でワークスペースを作成する](images/momento_10.png)
+
+
+##### Cloud9を起動すると、ファイル ブラウザ、ファイル エディタ、ターミナルで構成される 3 つのウィンドウが表示されます。
+
+![cloud9でワークスペースを作成する](images/momento_11.png)
+
+#### 操作に必要なものをインストールする
+
+* まずは、aws cliがダウンロードされていることを確認します。
+```
+$ aws --version
+aws-cli/2.13.13 Python/3.11.4 Linux/4.14.322-244.536.amzn2.x86_64 exe/x86_64.amzn.2 prompt/off
+```
+
+* 次にGitがインストールされていることを確認します。
+
+```
+$ git --version
+git version 2.40.1
+```
+
+* 問題がなければ、今回使用するソースコードをcloneしてきます。
+
+```
+ $ git clone https://github.com/Yoshiitaka/momento-topics-hands-on.git
+Cloning into 'momento-topics-hands-on'...
+remote: Enumerating objects: 169, done.
+remote: Counting objects: 100% (169/169), done.
+remote: Compressing objects: 100% (108/108), done.
+remote: Total 169 (delta 63), reused 147 (delta 47), pack-reused 0
+Receiving objects: 100% (169/169), 1010.95 KiB | 11.75 MiB/s, done.
+Resolving deltas: 100% (63/63), done.
+```
+
+* 無事cloneが完成すると以下のようにcloud9上は表示されます。
+
+![momento Topicsを体験する](images/momento_12.png)
+
+* 最後にチェックしていただきたいのは、sam cliがインストールされていることを確認いたします。
+* 今回はデータストアとなるDynamoDBやオブジェクトストレージにはS3を使用しています。それら資源については、SAMを利用し資源を作成するような流れとなります。
+
+```
+$ sam --version
+SAM CLI, version 1.72.0
+```
 
 ### SAMを利用し、データストアを構築
+
+
 
 ### SNSチャットアプリを構築する
 
