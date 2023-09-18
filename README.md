@@ -179,25 +179,114 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 ```
 
 ### SNSチャットアプリを構築する
-
-#### 認証情報を作成する
-
 #### 環境変数の設定
 ##### 操作1: [sample_env]の名前を[.env.local]に変更する
 ##### 操作2: 次に、「.env.local」に記述されている[MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
+##### 操作3: 「Amazon Cognito」に移動し、「IDプール」を選択します。[CognitoIdentityPool_XXXXXX]という「IDプール名」で新規のIDプールが作成されていると思うので、その[IDプールのID]をコピーします。その後、「.env.local」に記述されている[NEXT_PUBLIC_COGNITO_IDENTITY_POOL]にIDプールのIDを貼り付けます。
+##### 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
 
-##### 操作3: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
+#### AWS App Runnerへチャットアプリをデプロイします。
+##### 一時認証ではなく、EC2のインスタンスロールでのDeployとする
+* copilot を使用し、deployする際には一時クレデンシャルを使用しないよう設定する必要があります。
+* cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」をクリックします。
+* その後、下記の「AWS managed temporary credentials」をオフにします。
 
-##### cloud9上で動作確認をします。
+![cloud9上での操作](images/momento_15.png)
 
-i .env
-NEXT_PUBLIC_AUTH_BASE_URL="aaa"と作成し、”xxxxxxxx”を入力し:qw!で保存する
+##### 操作5: 次に下記のコマンドにてcopilotをインストールしていきます。
 
-手順2: momento クライアント側のコードを追加する
+```
+$ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux && chmod +x copilot && sudo mv copilot /usr/local/bin/copilot && copilot --help
+```
 
-### AWS App Runnerへチャットアプリをデプロイ
+※ [copilotについて](https://aws.github.io/copilot-cli/ja/docs/getting-started/install/)
+
+
+##### 操作6: アプリの設定をする
+
+* 下記のコマンドでcopilotの設定をしていきます。
+
+```
+$ pwd
+/home/ec2-user/environment/momento-topics-hands-on
+
+$ copilot app init
+```
+
+* 下記の質問に答えていきます。
+まず最初に AWS Copilot Application を初期化します。copilot app init を実行しましょう。Application 名を聞かれるので momento-workshop と答えます。
+
+```
+ What would you like to name your application? [? for help]: momento-workshop
+```
+
+AWS Copilot は AWS CloudFormation を用いてリソースの管理を行います。CloudFormation のコンソールに移動してみると以下のようにスタックが 1 つ作成されていることがわかります。
+
+もし AWS Copilot を使っていてエラーが出力されたときは CloudFormation の画面も見てみると原因究明がしやすいと思います。
+
+また AWS Copilot は Application や Environment の情報を AWS Systems Manager Parameter Store で管理しています。Parameter Store の画面に移動してみるとこちらのようにmomento-workshop というパラメータが作成されています。Parameter Store で管理しているおかげで別の端末からも既存 Application を選択して操作することができます。手動ではこのパラメータに触らないようにしましょう。
+
+
+###### AWS Copilot Environment を作成する
+* 次に AWS Copilot Service が動くインフラ部分の Environment を作成します。
+
+* Environment を初期化する時にはデフォルトの CIDR 設定で初期化することもできますし、CIDR を少しカスタマイズすることもできますし、既存の VPC をインポートすることもできます。Environment を作成するのは AWS クレデンシャルに記載されたアカウントのリージョンなので、別リージョンでも別アカウントでも同じようにEnvironment を作成することができます。VPC の設定項目にこだわりがなければ AWS Copilot のデフォルト設定で初期化する、細かい要件があったり VPC Peering している既存 VPC を使用したいといったネットワーク要件があれば既存 VPC をインポートして使うといった使い分けが可能です。
+
+* 今回は新しく VPC を作るところから始めましょう。質問には以下のように答えます。最後の質問で No, I'd like to import existing resources と答えると現在のリージョンにある VPC 一覧からインポートする VPC を選ぶことができます。
+
+
+> Environment name: dev と入力して Enter  
+> Credential source: [profile default] を選択して Enter  
+> Default environment configuration? : Yes, use default.   
+を選択して Enter
+
+```
+$ copilot env init
+```
+
+コマンドの実行後は何やら CloudFormation を使ってリソースが作成されていますね。注意していただきたいのはこの瞬間にクラウド上に VPC が作成されているわけではないという点です。copilot/environments/dev/manifest.yml という Environment を定義した Manifest ファイルがローカルに作成されて Environment を操作する IAM Role などが作成されただけで、クラウド上にまだ VPC は作成されていません。必要であればこの Manifest ファイルを編集した上で copilot env deploy コマンドを実行して初めてクラウド上に VPC などのリソースが作成されます。
+
+```
+$ copilot env deploy
+```
+
+
+###### Request-Driven Web Service の作成
+
+* Application, Environment が準備できたのでいよいよ Service を作成しましょう。途中の質問には以下のように回答します。
+
+```
+$ copilot svc init
+```
+
+> Service type: Request-Driven Web Serviceを選択して Enter  
+Service name: frontend と入力して Enter  
+Would you like to accept traffic from your environment or the internet?: Internet を選択して Enter  
+Which Dockerfile would you like to use for frontend? ./Dockerfile を選択して Enter  
+
+
+###### Service をデプロイ
+
+このコマンドを実行すると裏側で App Runner 用の ECR リポジトリを作成してくれます。痒いところに手が届いて便利ですね。
+
+copilot/frontend/manifest.yml を開いてみましょう。このファイルで Service を定義していて、ドキュメント にあるようにさらに細かく設定することもできます。App Runner は十分シンプルなサービスではありますが割り当てる CPU などのリソース定義や環境変数など最低限の設定は必要です。これにさらに VPC Connector の設定などが増えてくるとどこかで IaC の管理をしたくなってくるでしょう。そういった時に AWS Copilot は選択肢の 1 つになります。
+
+では早速この Service をデプロイしましょう。
+
+```
+$ copilot svc deploy
+```
 
 
 ### 動作確認
+各々で確認していきます。
 
-### まとめ
+### お片付け
+
+```
+$ copilot app delete
+Are you sure ~ ?: Y
+
+$ cd serverless
+$ sam delete
+```
