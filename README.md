@@ -148,11 +148,39 @@ SAM CLI, version 1.72.0
 
 ### SAMを利用し、データストアを構築
 
+* まず、初めにデータストアの資源を作成していきます。
+* 下記のディレクトリへ移動してください。
 
+```
+cd momento-topics-hands-on/serverless/
+```
+
+* 次にエディタも開いていきます。momento-topics-hands-on/serverless/template.yamlを開いてください。
+
+![cloud9上での操作](images/momento_13.png)
+
+* template.yamlを更新する必要がございます。
+* 10行目のコードで`BucketName`と書かれた箇所の値を更新してください。
+* 例えば、[momento-workshop-202309-koitabashi]のように他のユーザと被らない値であればなんでもよいです。
+
+* 修正が完了したら、`sam deploy`コマンドで資源を作成していきます。
+
+```
+$ sam deploy
+```
+
+* コンソール上で下記の内容が表示されたら、`Y`を入力する。
+![cloud9上での操作](images/momento_14.png)
+
+* うまくいくと下記のように表示されます。
+
+```
+Successfully created/updated stack - sam-app in ap-northeast-1
+```
 
 ### SNSチャットアプリを構築する
+#### 環境変数の設定
 
-バックエンドのAPIとWeb側でローカル起動をして動作確認をする
 操作1: .env.templateをコピーして、払い出したmomento auth toekn をcloneしたrepoの.envに設定する
 i .env
 NEXT_PUBLIC_AUTH_BASE_URL="aaa"と作成し、”xxxxxxxx”を入力し:qw!で保存する
