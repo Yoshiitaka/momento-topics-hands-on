@@ -188,7 +188,7 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 #### AWS App Runnerへチャットアプリをデプロイします。
 ##### 一時認証ではなく、EC2のインスタンスロールでのDeployとする
 * copilot を使用し、deployする際には一時クレデンシャルを使用しないよう設定する必要があります。
-* cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」をクリックします。
+* cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」から「AWS Setting」をクリックします。
 * その後、下記の「AWS managed temporary credentials」をオフにします。
 
 ![cloud9上での操作](images/momento_15.png)
@@ -221,11 +221,8 @@ $ copilot app init
 ```
 
 AWS Copilot は AWS CloudFormation を用いてリソースの管理を行います。CloudFormation のコンソールに移動してみると以下のようにスタックが 1 つ作成されていることがわかります。
-
 もし AWS Copilot を使っていてエラーが出力されたときは CloudFormation の画面も見てみると原因究明がしやすいと思います。
-
 また AWS Copilot は Application や Environment の情報を AWS Systems Manager Parameter Store で管理しています。Parameter Store の画面に移動してみるとこちらのようにmomento-workshop というパラメータが作成されています。Parameter Store で管理しているおかげで別の端末からも既存 Application を選択して操作することができます。手動ではこのパラメータに触らないようにしましょう。
-
 
 ###### AWS Copilot Environment を作成する
 * 次に AWS Copilot Service が動くインフラ部分の Environment を作成します。
@@ -234,22 +231,21 @@ AWS Copilot は AWS CloudFormation を用いてリソースの管理を行いま
 
 * 今回は新しく VPC を作るところから始めましょう。質問には以下のように答えます。最後の質問で No, I'd like to import existing resources と答えると現在のリージョンにある VPC 一覧からインポートする VPC を選ぶことができます。
 
+```
+$ copilot env init
+```
 
 > Environment name: dev と入力して Enter  
 > Credential source: [profile default] を選択して Enter  
 > Default environment configuration? : Yes, use default.   
 を選択して Enter
 
-```
-$ copilot env init
-```
-
 コマンドの実行後は何やら CloudFormation を使ってリソースが作成されていますね。注意していただきたいのはこの瞬間にクラウド上に VPC が作成されているわけではないという点です。copilot/environments/dev/manifest.yml という Environment を定義した Manifest ファイルがローカルに作成されて Environment を操作する IAM Role などが作成されただけで、クラウド上にまだ VPC は作成されていません。必要であればこの Manifest ファイルを編集した上で copilot env deploy コマンドを実行して初めてクラウド上に VPC などのリソースが作成されます。
 
 ```
+$ export AWS_REGION=ap-northeast-1
 $ copilot env deploy
 ```
-
 
 ###### Request-Driven Web Service の作成
 
@@ -276,7 +272,6 @@ copilot/frontend/manifest.yml を開いてみましょう。このファイル�
 ```
 $ copilot svc deploy
 ```
-
 
 ### 動作確認
 各々で確認していきます。
