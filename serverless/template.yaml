@@ -75,12 +75,14 @@ Resources:
   CognitoIdentityPool:
     Type: 'AWS::Cognito::IdentityPool'
     Properties:
+      IdentityPoolName: momento-workshop
       AllowUnauthenticatedIdentities: true
 
   # IAM Role for Unauthenticated Users
   UnauthRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: momento-workshop-role
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
