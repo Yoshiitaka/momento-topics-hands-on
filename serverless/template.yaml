@@ -6,7 +6,6 @@ Resources:
   UserImagesBucket:
     Type: AWS::S3::Bucket
     Properties:
-      # バケット名を変更する
       BucketName: user-images-bucket-2023-0907
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
@@ -71,3 +70,45 @@ Resources:
           Projection:
             ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
+
+  # Cognito Identity Poolの作成
+  CognitoIdentityPool:
+    Type: 'AWS::Cognito::IdentityPool'
+    Properties:
+      AllowUnauthenticatedIdentities: true
+
+  # IAM Role for Unauthenticated Users
+  UnauthRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Federated: 'cognito-identity.amazonaws.com'
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref CognitoIdentityPool
+              ForAnyValue:StringLike:
+                'cognito-identity.amazonaws.com:amr': 'unauthenticated'
+      Policies:
+        - PolicyName: UnauthCognitoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'dynamodb:*'
+                  - 's3:*'
+                Resource: '*'
+
+  # Associate the IAM roles with the Cognito Identity Pool
+  CognitoIdentityPoolRoles:
+    Type: 'AWS::Cognito::IdentityPoolRoleAttachment'
+    Properties:
+      IdentityPoolId: !Ref CognitoIdentityPool
+      Roles:
+        unauthenticated: !GetAtt UnauthRole.Arn
