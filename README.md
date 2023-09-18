@@ -6,6 +6,9 @@
 * データストアとしての DynamoDB
 * ホスティング先として、AWS App Runner
 
+全体のアーキテクチャ
+![momento コンソール](images/momento_18.png)
+
 # 学習目的
 前半のワークショップではMomentoについての概要、使うためにどうすればよいのかなど初期構築からMomentoコンソールの見方、APIキーの発行の仕方についてを学んでいきます。
 
@@ -264,11 +267,10 @@ $ copilot env deploy
 $ copilot svc init
 ```
 
-> Service type: Request-Driven Web Serviceを選択して Enter  
-Service name: momento と入力して Enter  
-Would you like to accept traffic from your environment or the internet?: Internet を選択して Enter  
-Which Dockerfile would you like to use for momento? ./Dockerfile を選択して Enter  
-
+> Service type: `Request-Driven Web Service`を選択して Enter  
+Service name: `momento` と入力して Enter  
+Would you like to accept traffic from your environment or the internet?: `Internet` を選択して Enter  
+Which Dockerfile would you like to use for momento? `./Dockerfile` を選択して Enter  
 
 ###### Service をデプロイ
 
