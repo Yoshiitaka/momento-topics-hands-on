@@ -180,8 +180,13 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 
 ### SNSチャットアプリを構築する
 #### 環境変数の設定
+##### 操作1: [sample_env]の名前を[.env.local]に変更する
+##### 操作2: 次に、「.env.local」に記述されている[MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
 
-操作1: .env.templateをコピーして、払い出したmomento auth toekn をcloneしたrepoの.envに設定する
+##### 操作3: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
+
+##### cloud9上で動作確認をします。
+
 i .env
 NEXT_PUBLIC_AUTH_BASE_URL="aaa"と作成し、”xxxxxxxx”を入力し:qw!で保存する
 

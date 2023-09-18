@@ -15,6 +15,10 @@ type TinderCardsProps = {
     currentUsername: string;
 };
 
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: process.env.NEXT_PUBLIC_COGNITO_IDENTITY_POOL || ''
+});
+
 AWS.config.update({
     region: 'ap-northeast-1'
 });
