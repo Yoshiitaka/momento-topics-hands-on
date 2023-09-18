@@ -186,14 +186,23 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 ##### 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
 
 #### AWS App Runnerへチャットアプリをデプロイします。
-##### 一時認証ではなく、EC2のインスタンスロールでのDeployとする
+##### 操作5: 一時認証ではなく、EC2のインスタンスロールでのDeployとする
 * copilot を使用し、deployする際には一時クレデンシャルを使用しないよう設定する必要があります。
 * cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」から「AWS Setting」をクリックします。
 * その後、下記の「AWS managed temporary credentials」をオフにします。
 
 ![cloud9上での操作](images/momento_15.png)
 
-##### 操作5: 次に下記のコマンドにてcopilotをインストールしていきます。
+##### 操作6: cloud9の基盤となるEC2インスタンスに付与されているIAMロールに権限を付与します。
+
+* 下記のCloud9のワークスペース情報が確認できるコンソール画面を別タブで開き「EC2インスタンスの管理」をクリックする。
+![cloud9上での操作](images/momento_16.png)
+
+* その後、EC2インスタンスの画面から、「セキュリティ」をクリックし、[AWSCloud9SSMAccessRole]に一時的に[AdministratorAccess]権限を付与する。
+
+![cloud9上での操作](images/momento_17.png)
+
+##### 操作7: 次に下記のコマンドにてcopilotをインストールしていきます。
 
 ```
 $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux && chmod +x copilot && sudo mv copilot /usr/local/bin/copilot && copilot --help
@@ -202,7 +211,7 @@ $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/c
 ※ [copilotについて](https://aws.github.io/copilot-cli/ja/docs/getting-started/install/)
 
 
-##### 操作6: アプリの設定をする
+##### 操作8: アプリの設定をする
 
 * 下記のコマンドでcopilotの設定をしていきます。
 
@@ -214,7 +223,7 @@ $ copilot app init
 ```
 
 * 下記の質問に答えていきます。
-まず最初に AWS Copilot Application を初期化します。copilot app init を実行しましょう。Application 名を聞かれるので momento-workshop と答えます。
+まず最初に AWS Copilot Application を初期化します。`copilot app init` を実行しましょう。Application 名を聞かれるので `momento-workshop` と答えます。
 
 ```
  What would you like to name your application? [? for help]: momento-workshop
@@ -256,16 +265,16 @@ $ copilot svc init
 ```
 
 > Service type: Request-Driven Web Serviceを選択して Enter  
-Service name: frontend と入力して Enter  
+Service name: momento と入力して Enter  
 Would you like to accept traffic from your environment or the internet?: Internet を選択して Enter  
-Which Dockerfile would you like to use for frontend? ./Dockerfile を選択して Enter  
+Which Dockerfile would you like to use for momento? ./Dockerfile を選択して Enter  
 
 
 ###### Service をデプロイ
 
 このコマンドを実行すると裏側で App Runner 用の ECR リポジトリを作成してくれます。痒いところに手が届いて便利ですね。
 
-copilot/frontend/manifest.yml を開いてみましょう。このファイルで Service を定義していて、ドキュメント にあるようにさらに細かく設定することもできます。App Runner は十分シンプルなサービスではありますが割り当てる CPU などのリソース定義や環境変数など最低限の設定は必要です。これにさらに VPC Connector の設定などが増えてくるとどこかで IaC の管理をしたくなってくるでしょう。そういった時に AWS Copilot は選択肢の 1 つになります。
+copilot/momento/manifest.yml を開いてみましょう。このファイルで Service を定義していて、ドキュメント にあるようにさらに細かく設定することもできます。App Runner は十分シンプルなサービスではありますが割り当てる CPU などのリソース定義や環境変数など最低限の設定は必要です。これにさらに VPC Connector の設定などが増えてくるとどこかで IaC の管理をしたくなってくるでしょう。そういった時に AWS Copilot は選択肢の 1 つになります。
 
 では早速この Service をデプロイしましょう。
 
@@ -284,4 +293,14 @@ Are you sure ~ ?: Y
 
 $ cd serverless
 $ sam delete
+```
+
+* IAMよりロールを選択し、[AWSCloud9SSMAccessRole]を絞り込む。
+* 一時的に付与した[AdministratorAccess]権限を削除して終了。
+
+#### Tips
+* volumeが不足した場合
+```
+$ docker volume prune  
+$ docker system prune
 ```
