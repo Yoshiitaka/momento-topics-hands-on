@@ -2,8 +2,7 @@
 import { NextPage } from 'next';
 import { useState } from "react";
 import AWS from 'aws-sdk';
-import TinderHeader from '../src/components/Header';
-import TinderCards from '../src/components/TinderCards';
+import { useRouter } from 'next/router';
 
 const Page: NextPage = () => {
   const [username, setUsername] = useState("");
@@ -17,6 +16,8 @@ const Page: NextPage = () => {
   AWS.config.update({
     region: 'ap-northeast-1'
   });
+
+  const router = useRouter();
 
   const s3 = new AWS.S3();
   const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -58,6 +59,7 @@ const Page: NextPage = () => {
       if (result) {
         localStorage.setItem('username', username);
         setUsernameSelected(true);
+        router.push(`/home?username=${username}`);
       } else {
         // handle error here
       }
@@ -102,13 +104,6 @@ const Page: NextPage = () => {
       </div>
     );
   }
-
-  return (
-    <>
-      <TinderHeader />
-      <TinderCards currentUsername={username} />
-    </>
-  );
 }
 
 export default Page
