@@ -22,7 +22,7 @@
 
 ### 1. Momento コンソールへサインアップおよびAPIキーを作成する
 
-#### Momento(https://www.gomomento.com/jp/home-page)にアクセスしてください。
+#### Momento( https://www.gomomento.com/jp/home-page )にアクセスしてください。
 ![momento コンソール](images/momento_1.png)
 
 #### Momento Console からサインアップします。
@@ -163,7 +163,7 @@ cd momento-topics-hands-on/serverless/
 ![cloud9上での操作](images/momento_13.png)
 
 * template.yamlを更新する必要がございます。
-* 10行目のコードで`BucketName`と書かれた箇所の値を更新してください。
+* 9行目のコードで`BucketName`と書かれた箇所の値を更新してください。
 * 例えば、[momento-workshop-202309-koitabashi]のように他のユーザと被らない値であればなんでもよいです。
 
 * 修正が完了したら、`sam deploy`コマンドで資源を作成していきます。
@@ -222,6 +222,7 @@ $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/c
 $ pwd
 /home/ec2-user/environment/momento-topics-hands-on
 
+$ export AWS_REGION=ap-northeast-1
 $ copilot app init
 ```
 
@@ -248,14 +249,12 @@ $ copilot env init
 ```
 
 > Environment name: dev と入力して Enter  
-> Credential source: [profile default] を選択して Enter  
 > Default environment configuration? : Yes, use default.   
 を選択して Enter
 
 コマンドの実行後は何やら CloudFormation を使ってリソースが作成されていますね。注意していただきたいのはこの瞬間にクラウド上に VPC が作成されているわけではないという点です。copilot/environments/dev/manifest.yml という Environment を定義した Manifest ファイルがローカルに作成されて Environment を操作する IAM Role などが作成されただけで、クラウド上にまだ VPC は作成されていません。必要であればこの Manifest ファイルを編集した上で copilot env deploy コマンドを実行して初めてクラウド上に VPC などのリソースが作成されます。
 
 ```
-$ export AWS_REGION=ap-northeast-1
 $ copilot env deploy
 ```
 
