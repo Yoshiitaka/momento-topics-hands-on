@@ -32,7 +32,7 @@
 
 ![momento cacheの作成](images/momento_3.png)
 
-#### キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[ap-northeast-1]を選択し、「作成」を押す。
+#### キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を選択し、「作成」を押す。
 
 ![momento cacheの作成](images/momento_4.png)
 
@@ -40,7 +40,7 @@
 #### Momento SDKを使用するためにAPIキーを発行します。
 * 左のタブにある[トークンの生成]を選択すると以下の画面が表示されます。
 * 「Type of key」は「Super User Key」を選択します。
-* ラウドプロバイダー&リージョンに[aws]を、リージョンは[ap-northeast-1]を、Expirationは[30日]を選択いたします。
+* ラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を、Expirationは[30日]を選択いたします。
 * 最後に「トークンを生成する」をクリックします。
 
 ![momento apiキーを発行する](images/momento_5.png)
@@ -53,7 +53,7 @@
 ### Momento Topicsを体験する為の設定をします。
 * 左のタブにある「topics」を選択する。
 * そうすると以下の画面になります。
-* 「クラウドプロバイダー」には[aws]を選択し、「リージョン」には[ap-northeast-1]を、「Cache」に[example]を設定します。
+* 「クラウドプロバイダー」には[aws]を選択し、「リージョン」には[us-west-2]を、「Cache」に[example]を設定します。
 * 最後に、「Topics」に[test]を入力し、「Subscribe」をクリックします。
 
 ![momento Topicsを体験する](images/momento_7.png)
@@ -85,7 +85,7 @@ AWS Cloud9 の詳細については、以下のリソースをご覧ください
 
 https://docs.aws.amazon.com/ja_jp/cloud9/latest/user-guide/tutorial-create-environment.html
 
-* 「リージョン」は[ap-northeast-1]を設定し、「環境作を作成」からワークスペースを作成します。
+* 「リージョン」は[us-west-2]を設定し、「環境作を作成」からワークスペースを作成します。
 
 ![cloud9でワークスペースを作成する](images/momento_9.png)
 
@@ -178,7 +178,7 @@ $ sam deploy
 * うまくいくと下記のように表示されます。
 
 ```
-Successfully created/updated stack - sam-app in ap-northeast-1
+Successfully created/updated stack - sam-app in us-west-2
 ```
 
 ### SNSチャットアプリを構築する
@@ -222,7 +222,7 @@ $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/c
 $ pwd
 /home/ec2-user/environment/momento-topics-hands-on
 
-$ export AWS_REGION=ap-northeast-1
+$ export AWS_REGION=us-west-2
 $ copilot app init
 ```
 

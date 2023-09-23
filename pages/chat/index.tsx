@@ -2,7 +2,7 @@ import Header from '../../src/components/Header';
 import Chats from '../../src/components/Chats';
 import { NextPage } from 'next';
 
-const Page: NextPage<{}> = () => {
+const Page: NextPage = () => {
 
   return (
     <div className="App">

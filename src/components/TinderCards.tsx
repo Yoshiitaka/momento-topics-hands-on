@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic';
 import AWS from 'aws-sdk';
@@ -114,7 +115,7 @@ function TinderCards({ currentUsername }: TinderCardsProps) {
             <div className='flex justify-center mt-20'>
                 {people.map(person => (
                     <TinderCard 
-                        onSwipe={(direction) => onSwipe(direction, person.name, currentUsername)} 
+                        onSwipe={(direction: any) => onSwipe(direction, person.name, currentUsername)} 
                         className='absolute bg-white' 
                         key={person.name} 
                         preventSwipe={['up', 'down']}>

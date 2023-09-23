@@ -3,7 +3,7 @@ import TinderCards from '../../src/components/TinderCards';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-const Page: NextPage<{}> = () => {
+const Page: NextPage = () => {
     const router = useRouter();
     const { username } = router.query;
 

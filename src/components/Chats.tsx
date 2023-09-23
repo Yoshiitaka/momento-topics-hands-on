@@ -42,6 +42,7 @@ function Chats() {
                 const userNames = result.Items?.map(item => item.username);
                 const fetchedChats = [];
 
+                // eslint-disable-next-line
                 for (let username of userNames as any) {
                     if (username === storedUsername) continue;
                     const s3Params = {
