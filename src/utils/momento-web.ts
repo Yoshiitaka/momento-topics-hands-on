@@ -40,19 +40,6 @@ type MomentoClients = {
   topicClient: TopicClient;
 };
 
-async function getNewWebClients(): Promise<MomentoClients> {
-  const token =  process.env.NEXT_PUBLIC_MOMENTO_AUTH_TOKEN || ""
-  const topicClient = new TopicClient({
-    configuration: Configurations.Browser.v1(),
-    credentialProvider: CredentialProvider.fromString({
-      authToken: token,
-    }),
-  });
-  return {
-    topicClient,
-  };
-}
-
 async function getWebTopicClient(): Promise<TopicClient> {
   if (webTopicClient) {
     return webTopicClient;
