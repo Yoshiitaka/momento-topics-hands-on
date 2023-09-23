@@ -179,10 +179,10 @@ else
 fi
 ```
 
-IDE のターミナルセッションから、resize.sh ファイルが格納されているディレクトリに移動します。それから次のコマンドを実行し、120 を Amazon EBS ボリュームのリサイズとして希望する Gib 単位のサイズに置き換えます。
+IDE のターミナルセッションから、resize.sh ファイルが格納されているディレクトリに移動します。それから次のコマンドを実行し、100 を Amazon EBS ボリュームのリサイズとして希望する Gib 単位のサイズに置き換えます。
 
 ```
-bash resize.sh 120
+bash resize.sh 100
 ```
 
 ```
@@ -265,19 +265,39 @@ Successfully created/updated stack - sam-app in us-west-2
 ### SNSチャットアプリを構築する
 #### 環境変数の設定
 ##### 操作1: [sample_env]の名前を[.env.local]に変更する
-##### 操作2: 次に、「.env.local」に記述されている[MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
+##### 操作2: 次に、「.env.local」に記述されている[NEXT_PUBLIC_MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
 ##### 操作3: 「Amazon Cognito」に移動し、「IDプール」を選択します。[CognitoIdentityPool_XXXXXX]という「IDプール名」で新規のIDプールが作成されていると思うので、その[IDプールのID]をコピーします。その後、「.env.local」に記述されている[NEXT_PUBLIC_COGNITO_IDENTITY_POOL]にIDプールのIDを貼り付けます。
 ##### 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
 
+##### 操作5: momento clientを作成する
+* src/utils/momento-web.tsに移動し、42行目に以下のコードを追加してください。
+
+```
+
+async function getNewWebClients(): Promise<MomentoClients> {
+  const token =  process.env.NEXT_PUBLIC_MOMENTO_AUTH_TOKEN || ""
+  const topicClient = new TopicClient({
+    configuration: Configurations.Browser.v1(),
+    credentialProvider: CredentialProvider.fromString({
+      authToken: token,
+    }),
+  });
+  return {
+    topicClient,
+  };
+}
+
+```
+
 #### AWS App Runnerへチャットアプリをデプロイします。
-##### 操作5: 一時認証ではなく、EC2のインスタンスロールでのDeployとする
+##### 操作6: 一時認証ではなく、EC2のインスタンスロールでのDeployとする
 * copilot を使用し、deployする際には一時クレデンシャルを使用しないよう設定する必要があります。
 * cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」から「AWS Setting」をクリックします。
 * その後、下記の「AWS managed temporary credentials」をオフにします。
 
 ![cloud9上での操作](images/momento_15.png)
 
-##### 操作6: cloud9の基盤となるEC2インスタンスに付与されているIAMロールに権限を付与します。
+##### 操作7: cloud9の基盤となるEC2インスタンスに付与されているIAMロールに権限を付与します。
 
 * 下記のCloud9のワークスペース情報が確認できるコンソール画面を別タブで開き「EC2インスタンスの管理」をクリックする。
 ![cloud9上での操作](images/momento_16.png)
@@ -286,7 +306,7 @@ Successfully created/updated stack - sam-app in us-west-2
 
 ![cloud9上での操作](images/momento_17.png)
 
-##### 操作7: 次に下記のコマンドにてcopilotをインストールしていきます。
+##### 操作8: 次に下記のコマンドにてcopilotをインストールしていきます。
 
 ```
 $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux && chmod +x copilot && sudo mv copilot /usr/local/bin/copilot && copilot --help
@@ -295,7 +315,7 @@ $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/c
 ※ [copilotについて](https://aws.github.io/copilot-cli/ja/docs/getting-started/install/)
 
 
-##### 操作8: アプリの設定をする
+##### 操作9: アプリの設定をする
 
 * 下記のコマンドでcopilotの設定をしていきます。
 

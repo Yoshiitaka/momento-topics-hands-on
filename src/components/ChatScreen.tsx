@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   type ChatEvent,
-  clearCurrentClient,
   EventTypes,
   sendMessage,
   subscribeToTopic,
@@ -40,7 +39,6 @@ export default function ChatRoom(props: Props) {
       error,
     );
     sub.unsubscribe();
-    clearCurrentClient();
     await subscribeToTopic(props.cacheName, props.topicName, onItem, onError);
   };
 

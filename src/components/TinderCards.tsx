@@ -87,7 +87,7 @@ function TinderCards({ currentUsername }: TinderCardsProps) {
                 const fetchedPeople = [];
 
                 for (let username of userNames as any) {
-                    if (username === currentUsername) continue;
+                    // if (username === currentUsername) continue;
                     const s3Params = {
                         Bucket: `${backetName}`,
                         Prefix: username
@@ -101,7 +101,8 @@ function TinderCards({ currentUsername }: TinderCardsProps) {
                         });
                     }
                 }
-                setPeople(fetchedPeople);
+                const filteredPeople = fetchedPeople.filter(person => person.name !== currentUsername);
+                setPeople(filteredPeople);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

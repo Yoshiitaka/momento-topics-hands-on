@@ -41,30 +41,17 @@ type MomentoClients = {
 };
 
 async function getNewWebClients(): Promise<MomentoClients> {
-  webTopicClient = undefined;
-  // we don't want to cache the token, since it will expire in 5 min
-  const fetchResp = await fetch(window.location.origin + "/api/momento/token", {
-    cache: "no-store",
-  });
-  const jsonResponse = await fetchResp.json();
-  const token = jsonResponse.authToken;
+  const token =  process.env.NEXT_PUBLIC_MOMENTO_AUTH_TOKEN || ""
   const topicClient = new TopicClient({
     configuration: Configurations.Browser.v1(),
     credentialProvider: CredentialProvider.fromString({
       authToken: token,
     }),
   });
-  webTopicClient = topicClient;
   return {
     topicClient,
   };
 }
-
-export const clearCurrentClient = () => {
-  subscription?.unsubscribe();
-  subscription = undefined;
-  webTopicClient = undefined;
-};
 
 async function getWebTopicClient(): Promise<TopicClient> {
   if (webTopicClient) {
@@ -73,12 +60,6 @@ async function getWebTopicClient(): Promise<TopicClient> {
 
   const clients = await getNewWebClients();
   return clients.topicClient;
-}
-
-export async function listCaches(): Promise<string[]> {
-  const fetchResp = await fetch(window.location.origin + "/api/momento/caches");
-  const caches: string[] = await fetchResp.json();
-  return caches;
 }
 
 export async function subscribeToTopic(
@@ -113,7 +94,6 @@ async function publish(cacheName: string, topicName: string, message: string) {
       console.log(
         "token has expired, going to refresh subscription and retry publish",
       );
-      clearCurrentClient();
       await subscribeToTopic(cacheName, topicName, onItemCb, onErrorCb);
       await publish(cacheName, topicName, message);
     } else {
