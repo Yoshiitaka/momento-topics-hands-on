@@ -32,14 +32,14 @@
 
 ![momento cacheの作成](images/momento_3.png)
 
-* キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を選択し、「作成」を押す。
+* キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[ap-northeast-1]を選択し、「作成」を押す。
 
 ![momento cacheの作成](images/momento_4.png)
 
 #### Momento SDKを使用するためにAPIキーを発行します。
 * 左のタブにある[トークンの生成]を選択すると以下の画面が表示されます。
 * 「Type of key」は「Super User Key」を選択します。
-* ラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を、Expirationは[30日]を選択いたします。
+* ラウドプロバイダー&リージョンに[aws]を、リージョンは[ap-northeast-1]を、Expirationは[30日]を選択いたします。
 * 最後に「トークンを生成する」をクリックします。
 
 ![momento apiキーを発行する](images/momento_5.png)
