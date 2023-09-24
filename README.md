@@ -32,10 +32,9 @@
 
 ![momento cacheの作成](images/momento_3.png)
 
-#### キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を選択し、「作成」を押す。
+* キャッシュ名に[example]を入力し、クラウドプロバイダー&リージョンに[aws]を、リージョンは[us-west-2]を選択し、「作成」を押す。
 
 ![momento cacheの作成](images/momento_4.png)
-
 
 #### Momento SDKを使用するためにAPIキーを発行します。
 * 左のタブにある[トークンの生成]を選択すると以下の画面が表示されます。
@@ -53,7 +52,7 @@
 ### Momento Topicsを体験する為の設定をします。
 * 左のタブにある「topics」を選択する。
 * そうすると以下の画面になります。
-* 「クラウドプロバイダー」には[aws]を選択し、「リージョン」には[us-west-2]を、「Cache」に[example]を設定します。
+* 「クラウドプロバイダー」には[aws]を選択し、「リージョン」には[ap-northeast-1]を、「Cache」に[example]を設定します。
 * 最後に、「Topics」に[test]を入力し、「Subscribe」をクリックします。
 
 ![momento Topicsを体験する](images/momento_7.png)
@@ -85,13 +84,13 @@ AWS Cloud9 の詳細については、以下のリソースをご覧ください
 
 https://docs.aws.amazon.com/ja_jp/cloud9/latest/user-guide/tutorial-create-environment.html
 
-* 「リージョン」は[us-west-2]を設定し、「環境作を作成」からワークスペースを作成します。
+* 「リージョン」は[ap-northeast-1]を設定し、「環境作を作成」からワークスペースを作成します。
 
 ![cloud9でワークスペースを作成する](images/momento_9.png)
 
 * 名前に[momento-workspace]を入力してください。
 * 環境タイプはデフォストの状態で[新しいEC2インスタンス]のチェックボックスの入力のままにしておきます。
-* 新しいEC2インスタンスにはデフォルトの状態のままで[t2.micro]のチェックボックスに入力されたままにしておきます。
+* 新しいEC2インスタンスにはデフォルトの状態のままで[t3.small]のチェックボックスに入力されたままにしておきます。
 * プラットフォームは[Amazon Linux 2]のままでタイムアウトは[30分]のままにします。
 * ネットワーク設定については、接続を[AWS Systems Manager(SSM)]のままにします。
 * VPCの設定もいじらずそのままとしましょう。
@@ -259,17 +258,17 @@ $ sam deploy
 * うまくいくと下記のように表示されます。
 
 ```
-Successfully created/updated stack - sam-app in us-west-2
+Successfully created/updated stack - sam-app in ap-northeast-1
 ```
 
 ### SNSチャットアプリを構築する
 #### 環境変数の設定
-##### 操作1: [sample_env]の名前を[.env.local]に変更する
-##### 操作2: 次に、「.env.local」に記述されている[NEXT_PUBLIC_MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
-##### 操作3: 「Amazon Cognito」に移動し、「IDプール」を選択します。[CognitoIdentityPool_XXXXXX]という「IDプール名」で新規のIDプールが作成されていると思うので、その[IDプールのID]をコピーします。その後、「.env.local」に記述されている[NEXT_PUBLIC_COGNITO_IDENTITY_POOL]にIDプールのIDを貼り付けます。
-##### 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
+* 操作1: [sample_env]の名前を[.env.local]に変更する
+* 操作2: 次に、「.env.local」に記述されている[NEXT_PUBLIC_MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
+* 操作3: 「Amazon Cognito」に移動し、「IDプール」を選択します。[CognitoIdentityPool_XXXXXX]という「IDプール名」で新規のIDプールが作成されていると思うので、その[IDプールのID]をコピーします。その後、「.env.local」に記述されている[NEXT_PUBLIC_COGNITO_IDENTITY_POOL]にIDプールのIDを貼り付けます。
+* 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
 
-##### 操作5: momento clientを作成する
+* 操作5: momento clientを作成する
 * src/utils/momento-web.tsに移動し、42行目に以下のコードを追加してください。
 
 ```
@@ -290,14 +289,14 @@ async function getNewWebClients(): Promise<MomentoClients> {
 ```
 
 #### AWS App Runnerへチャットアプリをデプロイします。
-##### 操作6: 一時認証ではなく、EC2のインスタンスロールでのDeployとする
+* 操作6: 一時認証ではなく、EC2のインスタンスロールでのDeployとする
 * copilot を使用し、deployする際には一時クレデンシャルを使用しないよう設定する必要があります。
 * cloud9上にて、左上のcloud9のアイコンをクリックすると「Preferences」から「AWS Setting」をクリックします。
 * その後、下記の「AWS managed temporary credentials」をオフにします。
 
 ![cloud9上での操作](images/momento_15.png)
 
-##### 操作7: cloud9の基盤となるEC2インスタンスに付与されているIAMロールに権限を付与します。
+* 操作7: cloud9の基盤となるEC2インスタンスに付与されているIAMロールに権限を付与します。
 
 * 下記のCloud9のワークスペース情報が確認できるコンソール画面を別タブで開き「EC2インスタンスの管理」をクリックする。
 ![cloud9上での操作](images/momento_16.png)
@@ -323,7 +322,7 @@ $ curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/c
 $ pwd
 /home/ec2-user/environment/momento-topics-hands-on
 
-$ export AWS_REGION=us-west-2
+$ export AWS_REGION=ap-northeast-1
 $ copilot app init
 ```
 

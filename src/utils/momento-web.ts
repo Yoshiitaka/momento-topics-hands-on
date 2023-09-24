@@ -28,7 +28,7 @@ export type UserJoinedEvent = {
 
 export type ChatEvent = UserJoinedEvent | ChatMessageEvent;
 
-let webTopicClient: TopicClient | undefined = undefined;
+const webTopicClient: TopicClient | undefined = undefined;
 let subscription: TopicSubscribe.Subscription | undefined = undefined;
 let onItemCb: (item: TopicItem) => void;
 let onErrorCb: (
