@@ -22,7 +22,7 @@
 
 ### 1. Momento コンソールへサインアップおよびAPIキーを作成する
 
-#### Momento( https://www.gomomento.com/jp/home-page )にアクセスしてください。
+#### Momento( https://jp.gomomento.com/ )にアクセスしてください。
 ![momento コンソール](images/momento_1.png)
 
 #### Momento Console からサインアップします。
