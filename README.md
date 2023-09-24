@@ -264,7 +264,7 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 ### SNSチャットアプリを構築する
 #### 環境変数の設定
 * 操作1: [sample_env]の名前を[.env.local]に変更する
-* 操作2: 次に、「.env.local」に記述されている[NEXT_PUBLIC_MOMENTO_AUTH_TOKEN]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
+* 操作2: 次に、「.env.local」に記述されている[NEXT_PUBLIC_MOMENTO_API_KEY]に先ほどダウンロードしてきた「momento_key_info.json」に記述されている[apiKey]の値をコピペします。次に[NEXT_PUBLIC_MOMENTO_CACHE_NAME]には、先ほどMomentoコンソールで作成したキャッシュ名を記述します。変更がなければ[example]を記述します。
 * 操作3: 「Amazon Cognito」に移動し、「IDプール」を選択します。[CognitoIdentityPool_XXXXXX]という「IDプール名」で新規のIDプールが作成されていると思うので、その[IDプールのID]をコピーします。その後、「.env.local」に記述されている[NEXT_PUBLIC_COGNITO_IDENTITY_POOL]にIDプールのIDを貼り付けます。
 * 操作4: momento-topics-hands-onディレクトリ上で `npm i`を実施します。
 
@@ -274,11 +274,11 @@ Successfully created/updated stack - sam-app in ap-northeast-1
 ```
 
 async function getNewWebClients(): Promise<MomentoClients> {
-  const token =  process.env.NEXT_PUBLIC_MOMENTO_AUTH_TOKEN || ""
+  const apiKey =  process.env.NEXT_PUBLIC_MOMENTO_API_KEY || ""
   const topicClient = new TopicClient({
     configuration: Configurations.Browser.v1(),
     credentialProvider: CredentialProvider.fromString({
-      authToken: token,
+      apiKey,
     }),
   });
   return {
